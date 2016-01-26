@@ -1,7 +1,7 @@
 # SFFullscreenImageDetailViewController
 An interactive way to present images full screen
 
-![image](http://i.imgur.com/yAOtYG4.gifv)
+![image](https://media.giphy.com/media/26tnhQGdrzLsMORkA/giphy.gif)
 
 ##Usage
 
