@@ -28,5 +28,5 @@ An UIViewController which presents a given image view in full screen and allows 
     'SFFullscreenImageDetailViewController' => ['SFFullscreenImageDetailViewController/Assets/*.png']
   }
 
-  s.frameworks = 'UIKit'
+  s.frameworks = 'UIKit', 'QuartzCore'
 end
