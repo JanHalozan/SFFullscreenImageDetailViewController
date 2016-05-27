@@ -48,13 +48,26 @@ final class SFFullscreenImageDetailViewController: UIViewController, UIScrollVie
     
     init (imageView view: UIImageView) {
         self.originalView = view
-        self.originFrame = view.convertRect(view.bounds, toView: nil)
+        var calculationView: UIView = view
+        var visibleRect = view.bounds
+        
+        while true {
+            guard let superview = calculationView.superview else {
+                break
+            }
+            
+            visibleRect = superview.convertRect(visibleRect, fromView: calculationView)
+            visibleRect = CGRectIntersection(visibleRect, superview.bounds)
+            calculationView = superview
+        }
+        
+        self.originFrame = visibleRect
         self.imageView.contentMode = view.contentMode
         self.image = view.image!.copy() as! UIImage
         
         super.init(nibName: nil, bundle: nil)
         
-        self.closeButton.addTarget(self, action: "closeTapped:", forControlEvents: .TouchUpInside)
+        self.closeButton.addTarget(self, action: #selector(self.closeTapped(_:)), forControlEvents: .TouchUpInside)
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -82,10 +95,10 @@ final class SFFullscreenImageDetailViewController: UIViewController, UIScrollVie
         self.closeButton.frame = CGRectMake(15, 25, 20, 20)
         self.view.addSubview(self.closeButton)
         
-        let recognizer = UIPanGestureRecognizer(target: self, action: "panGestureCallback:")
+        let recognizer = UIPanGestureRecognizer(target: self, action: #selector(self.panGestureCallback(_:)))
         self.imageView.addGestureRecognizer(recognizer)
         
-        let tapRecognizer = UITapGestureRecognizer(target: self, action: "doubleTap:")
+        let tapRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.doubleTap(_:)))
         tapRecognizer.numberOfTapsRequired = 2
         self.imageView.addGestureRecognizer(tapRecognizer)
     }
@@ -158,6 +171,7 @@ final class SFFullscreenImageDetailViewController: UIViewController, UIScrollVie
                 weak var instance = view
                 weak var weakSelf = self
                 let snapBehaviour = UISnapBehavior(item: view, snapToPoint: originalCenter)
+                snapBehaviour.damping = 0.75
                 snapBehaviour.action = {
                     let movingCenter = instance!.center
                     let diffX = originalCenter.x - movingCenter.x, diffY = originalCenter.y - movingCenter.y
